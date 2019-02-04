@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "dependencies": {
     "sqlite3": "latest",
-    "express": "latest"
+    "express": "latest",
+    "csv": "latest",
+    "csv-parse": "latest"
   }
 }
