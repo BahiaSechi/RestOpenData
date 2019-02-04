@@ -1,0 +1,8 @@
+{
+  "name": "rest-opendata",
+  "version": "1.0.0",
+  "dependencies": {
+    "sqlite3": "latest",
+    "express": "latest"
+  }
+}
