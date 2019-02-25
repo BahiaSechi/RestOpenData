@@ -1,5 +1,5 @@
-function getArgs(func) {
-    var args = func.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+function constrArgs(cla) {
+    var args = cla.prototype.constructor.toString().match(/constructor\s*\(([^)]*)\)/)[1];
 
     return args.split(',').map(function(arg) {
         return arg.replace(/\/\*.*\*\//, '').trim();
@@ -8,4 +8,4 @@ function getArgs(func) {
     });
 }
 
-module.exports = {getArgs};
+module.exports = {constrArgs};

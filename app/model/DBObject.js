@@ -1,4 +1,4 @@
-const {getArgs} = require("../util");
+const {constrArgs} = require("../util");
 
 class DBObject {
     static csvNames() {
@@ -14,11 +14,26 @@ class DBObject {
     }
 
     static createTable(db) {
-
+        let args = "CREATE TABLE "+this.constructor.name + "(";
+        for (let i of constrArgs(this)){
+            args+=i+" text,";
+        }
+        args = args.substr(0, args.length-2);
+        args+=");";
+        db.run(args);
     }
 
     insert(db) {
 
+        Object.values(this)
+
+        /*db.run(`INSERT INTO langs(name) VALUES(?)`, Object.values(this), function(err) {
+            if (err) {
+                return console.log(err.message);
+            }
+            // get the last insert id
+            console.log(`A row has been inserted with rowid ${this.lastID}`);
+        });*/
     }
 }
 

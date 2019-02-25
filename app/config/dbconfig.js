@@ -10,15 +10,15 @@ let db = new sqlite.Database('./sqlite.db');
 
 function loadCsv(path, destClass) {
     destClass.createTable(db);
-
+/*
     fs.createReadStream(path)
         .pipe(parse({delimiter: ";", columns: true}))
         .on("data", data => {
             destClass.fromCsv(data).insert(db);
-        });
+        });*/
 }
 
 // Create tables
 loadCsv("csv/activites.csv", Activite);
 loadCsv("csv/equipements.csv", Equipement);
-loadCsv("csv/installations.csv", Installa);
+loadCsv("csv/installations.csv", Installation);
