@@ -52,12 +52,12 @@ class DBObject {
 
                 if(Array.isArray(attributs.key)){
                     attributs.key.forEach(function (elem) {
-                        command += key + "==" + elem + ", ";
+                        command += key + "=" + elem + ", ";
                         }
                     )
 
                 }else{
-                    command += key + "==" + attributs.key + ", ";
+                    command += key + "=" + attributs.key + ", ";
                 }
             }
         });
@@ -66,7 +66,6 @@ class DBObject {
             command = command.substr(0, command.length-2);
         }
         command += ";";
-
 
         db.run(command, function(err, rows) {
             //error
