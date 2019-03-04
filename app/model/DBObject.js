@@ -24,7 +24,7 @@ class DBObject {
     }
 
     insert(db) {
-        console.log("first");
+        //console.log("first");
         let vals = Object.values(this);
 
         let command = 'INSERT INTO ' + this.constructor.name + " VALUES ";
@@ -32,7 +32,7 @@ class DBObject {
         command += "(" + new Array(vals.length).fill("?").join(", ") + ");";
 
 
-        console.log("com")
+        //console.log("com");
         db.run(command, vals, function(err) {
             if (err) {
                 console.log(err.message);
