@@ -26,24 +26,61 @@ class DBObject {
     insert(db) {
         //console.log("first");
         let vals = Object.values(this);
-
         let command = 'INSERT INTO ' + this.constructor.name + " VALUES ";
-
         command += "(" + new Array(vals.length).fill("?").join(", ") + ");";
-
-
-        //console.log("com");
         db.run(command, vals, function(err) {
             if (err) {
                 console.log(err.message);
             }
             // get the last insert id
-            //console.log(`A row has been inserted with rowid ${this.lastID}`);
+        });
+    }
+
+    static get(db, attributs) {
+
+        let command = "SELECT * FROM " + table;
+        let keys = Object.keys(attributs);
+        let added = false;
+
+        keys.forEach(function (key) {
+
+            if(Object.keys(this).contains(key)){
+                if(!added){
+                    added = true;
+                    command += " WHERE ";
+                }
+
+                if(Array.isArray(attributs.key)){
+                    attributs.key.forEach(function (elem) {
+                        command += key + "==" + elem + ", ";
+                        }
+                    )
+
+                }else{
+                    command += key + "==" + attributs.key + ", ";
+                }
+            }
         });
 
-        console.log("ok")
+        if(added){
+            command = command.substr(0, command.length-2);
+        }
+        command += ";";
+
+
+        db.run(command, function(err, rows) {
+            //error
+            if (err) {
+                console.log(err.message);
+            }
+            rows.forEach((row) => {
+                console.log(row.name);
+            });
+
+        });
 
     }
+
 }
 
 module.exports = DBObject;
