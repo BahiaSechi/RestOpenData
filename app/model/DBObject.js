@@ -36,7 +36,7 @@ class DBObject {
         });
     }
 
-    static get(db, attributs) {
+    static get(db, attributs = {}) {
 
         let command = "SELECT * FROM " + table;
         let keys = Object.keys(attributs);
