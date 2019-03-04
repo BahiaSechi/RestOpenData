@@ -14,26 +14,35 @@ class DBObject {
     }
 
     static createTable(db) {
-        let args = "CREATE TABLE "+this.constructor.name + "(";
+        let args = "CREATE TABLE "+this.name + "(";
         for (let i of constrArgs(this)){
             args+=i+" text,";
         }
-        args = args.substr(0, args.length-2);
+        args = args.substr(0, args.length-1);
         args+=");";
         db.run(args);
     }
 
     insert(db) {
+        console.log("first");
+        let vals = Object.values(this);
 
-        Object.values(this)
+        let command = 'INSERT INTO ' + this.constructor.name + " VALUES ";
 
-        /*db.run(`INSERT INTO langs(name) VALUES(?)`, Object.values(this), function(err) {
+        command += "(" + new Array(vals.length).fill("?").join(", ") + ");";
+
+
+        console.log("com")
+        db.run(command, vals, function(err) {
             if (err) {
-                return console.log(err.message);
+                console.log(err.message);
             }
             // get the last insert id
-            console.log(`A row has been inserted with rowid ${this.lastID}`);
-        });*/
+            //console.log(`A row has been inserted with rowid ${this.lastID}`);
+        });
+
+        console.log("ok")
+
     }
 }
 
