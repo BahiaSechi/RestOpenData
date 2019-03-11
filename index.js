@@ -14,14 +14,12 @@ app.get('/', function (req, res) {
 
     // Récuperation des attributs de la requete
     let request = req.query;
-    console.log(request);
-    // Récuperation des clés des attributs
-    let keys = Object.keys(request);
 
     // Découpage des données en tableaux, pour ceux contenant une suite de valeurs séparés par des virgules
-    for (let requestKey in keys) {
-        if(request[requestKey].indexOf(",") > -1) request[requestKey] = request[requestKey].split(",");
+    for (let key in request) {
+        if(request[key].indexOf(",") > -1) request[key] = request[key].split(",");
     }
+
 
     if(request["activite"] === "true") resultat_requete["activite"] = Activite.get(db, request);
     if(request["equipement"] === "true") resultat_requete["equipement"] = Activite.get(db, request);
@@ -29,11 +27,17 @@ app.get('/', function (req, res) {
 
     if(request["activite"] === "false" && request["equipement"] === "false" && request["installation"] === "false"){
         resultat_requete["activite"] = Activite.get(db, request);
+        console.log(Activite.get(db, request));
+        console.log("");
         resultat_requete["equipement"] = Equipement.get(db, request);
+        console.log(Equipement.get(db, request));
+        console.log("");
         resultat_requete["installation"] = Installation.get(db, request);
+        console.log(Installation.get(db, request));
+        console.log("");
     }
 
-
+    console.log(resultat_requete);
 
     res.send(resultat_requete);
 });
