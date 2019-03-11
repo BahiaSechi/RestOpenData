@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <title>Équipements sportifs en Pays de la Loire</title>
     <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="index.js"></script>
 </head>
 <body>
 <header>
     <h1>Équipements sportifs en Pays de la Loire</h1>
-    <form>
+    <form method="get">
+        <div>
         <input type="text" name="recherche" class="recherche" placeholder="Que recherchez-vous ?">
         <br> <br>
         <select name="region" class="region">
@@ -20,6 +23,17 @@
         </select>
         <input type="text" name="ville_cp" class="ville_cp" placeholder="Code postal ou ville">
         <br> <br>
+
+            <div class="checkboxes">
+                 <input type="checkbox" name="installation" class="installation" id="installation">
+                <label for="installation">Installations</label>
+                 <input type="checkbox" name="activite" class="activite" id="activites">
+                <label for="activites">Activités</label>
+                 <input type="checkbox" name="equipement" class="equipement" id="equipement">
+                <label for="equipement">Équipements</label>
+            </div>
+
+    </div>
         <input type="submit" class="submit" value="Rechercher">
     </form>
 
