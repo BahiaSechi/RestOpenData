@@ -78,13 +78,15 @@ class DBObject {
         command += ";";
 
         console.log(command);
-        db.all(command, statement_args, (err, rows) => {
-            //error
-            if (err) {
-                console.log(err);
-            }
+        return new Promise((res) => {
+            db.all(command, statement_args, (err, rows) => {
+                //error
+                if (err) {
+                    console.log(err);
+                }
 
-            return rows;
+                res(rows);
+            });
         });
 
     }
