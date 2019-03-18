@@ -8,4 +8,8 @@ function constrArgs(cla) {
     });
 }
 
+Object.prototype.copy = function() {
+    return JSON.parse(JSON.stringify(this));
+};
+
 module.exports = {constrArgs};

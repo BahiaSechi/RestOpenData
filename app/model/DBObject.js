@@ -46,45 +46,63 @@ class DBObject {
         keys.forEach((key) => {
 
             // Si l'objet actuel possède cette clé d'attribut
-            if (constrArgs(this).includes(key)) {
-
+            if (constrArgs(this).includes(key) || key === "q") {
                 // si il n'y a pas encore eu d'ajouts on concatène le "WHERE"
                 if (!added) {
                     added = true;
                     command += " WHERE ";
                 }
 
-                // Si l'on a affaire à un tableau d'attributs
-                if (Array.isArray(attributs[key])) {
-                    // Pour chaque valeur du tableau on concatène les "OR"
-                    attributs[key].forEach(function (elem) {
-                        command += key + "=? OR ";
-                        statement_args.push(elem);
-                    });
-                    command = command.substr(0, command.length - 3) + "AND ";
-                } else {
-                    //Si il l'attribut n'est pas un tableau on le rajoute une seule fois
-                    command += key + "=? AND ";
-                    statement_args.push(attributs[key]);
+                if (constrArgs(this).includes(key)) {
+                    // Si l'on a affaire à un tableau d'attributs
+                    if (Array.isArray(attributs[key])) {
+                        if (attributs[key].length > 0) {
+                            // Pour chaque valeur du tableau on concatène les "OR"
+                            command += "(";
+                            attributs[key].forEach(elem => {
+                                command += key + "=? OR ";
+                                statement_args.push(elem);
+                            });
+                            command = command.substr(0, command.length - 4) + ") AND ";
+                        }
+                    } else {
+                        // Si l'attribut n'est pas un tableau on le rajoute une seule fois
+                        command += key + "=? AND ";
+                        statement_args.push(attributs[key]);
+                    }
+
+                } else { // q
+                    command += "(";
+                    for (let col of constrArgs(this)) {
+                        if (Array.isArray(attributs.q)) {
+                            attributs.q.forEach(elem => {
+                                command += col + " LIKE ? OR ";
+                                statement_args.push(`%${elem}%`);
+                            });
+                        } else {
+                            command += col + " LIKE ? OR ";
+                            statement_args.push(`%${attributs.q}%`);
+                        }
+                    }
+                    command = command.substr(0, command.length - 4) + ") AND ";
                 }
             }
         });
-
 
         if (added) {
             command = command.substr(0, command.length - 5);
         }
         command += ";";
 
-        return new Promise((res) => {
+        console.log(command);
+
+        return new Promise((res, rej) => {
             db.all(command, statement_args, (err, rows) => {
-                if (err) console.log(err);
+                if (err) rej(err);
                 res(rows);
             });
         });
-
     }
-
 }
 
 module.exports = DBObject;
