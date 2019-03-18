@@ -5,17 +5,28 @@ $(document).ready(function() {
 
     $('.submit').click(function (e) {
         e.preventDefault();
+
+        reqParams = [];
+
         let recherche = $('.recherche').val();
+        if (recherche !== "") reqParams.push(`q=${recherche}`);
+
+        let codePostal = $('.ville_cp').val();
+        if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
+
         let region = $('.region').val();
-        let ville_cp = $('.ville_cp').val();
-        let installation = $('.installation').is(':checked');
-        let equipement = $('.equipement').is(':checked');
-        let activite = $('.activite').is(':checked');
+        if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);
 
+        if ($('.installation').is(':checked'))
+            reqParams.push("installation");
 
-        let n = `${url}/?recherche=${recherche}&region=${region}&ville_cp=${ville_cp}&installation=${installation}&equipement=${equipement}&activite=${activite}`;
+        if ($('.equipement').is(':checked'))
+            reqParams.push("equipement");
 
-        fetch(n)
+        if ($('.activite').is(':checked'))
+            reqParams.push("activite");
+
+        fetch(url + "api?" + reqParams.join("&"))
             .then(res => res.json())
             .then(json => console.log(json))
             .catch(err => console.error(err));

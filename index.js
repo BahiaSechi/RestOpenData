@@ -8,7 +8,13 @@ const app = express();
 
 let db = new sqlite.Database('./sqlite.db');
 
-app.get('/', async function (req, res) {
+app.use(express.static("app/web/"));
+
+app.get('/', function(req, res) {
+    res.sendFile("index.html")
+});
+
+app.get("/api/", async function(req, res) {
 
     let resultat_requete = {};
 
@@ -20,16 +26,21 @@ app.get('/', async function (req, res) {
         if(request[key].indexOf(",") > -1) request[key] = request[key].split(",");
     }
 
-    let all = request.activite === "false" && request.equipement === "false" && request.installation === "false";
+    let inst = await Installation.get(db, request);
 
-    if(request.activite === "true" || all)
+    if(request.installation)
+        resultat_requete.installation = inst;
+
+    request.idInstallation = inst.map(i => i.id);
+    let equip = await Equipement.get(db, request);
+
+    if(request.equipement)
+        resultat_requete.equipement = equip;
+
+    request.idEquip = equip.map(i => i.id);
+
+    if(request.activite)
         resultat_requete.activite = await Activite.get(db, request);
-
-    if(request.equipement === "true" || all)
-        resultat_requete.equipement = await Equipement.get(db, request);
-
-    if(request.installation === "true" || all)
-        resultat_requete.installation = await Installation.get(db, request);
 
     res.send(JSON.stringify(resultat_requete));
 });
