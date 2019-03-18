@@ -37,7 +37,6 @@ class DBObject {
     }
 
     static get(db, attributs = {}) {
-
         let command = "SELECT * FROM " + this.name;
         let keys = Object.keys(attributs);
         let added = false;
@@ -77,14 +76,9 @@ class DBObject {
         }
         command += ";";
 
-        console.log(command);
         return new Promise((res) => {
             db.all(command, statement_args, (err, rows) => {
-                //error
-                if (err) {
-                    console.log(err);
-                }
-
+                if (err) console.log(err);
                 res(rows);
             });
         });

@@ -8,7 +8,7 @@ const app = express();
 
 let db = new sqlite.Database('./sqlite.db');
 
-app.get('/', function (req, res) {
+app.get('/', async function (req, res) {
 
     let resultat_requete = {};
 
@@ -20,26 +20,18 @@ app.get('/', function (req, res) {
         if(request[key].indexOf(",") > -1) request[key] = request[key].split(",");
     }
 
+    let all = request.activite === "false" && request.equipement === "false" && request.installation === "false";
 
-    if(request["activite"] === "true") resultat_requete["activite"] = Activite.get(db, request);
-    if(request["equipement"] === "true") resultat_requete["equipement"] = Activite.get(db, request);
-    if(request["installation"] === "true") resultat_requete["installation"] = Activite.get(db, request);
+    if(request.activite === "true" || all)
+        resultat_requete.activite = await Activite.get(db, request);
 
-    if(request["activite"] === "false" && request["equipement"] === "false" && request["installation"] === "false"){
-        resultat_requete["activite"] = Activite.get(db, request);
-        console.log(Activite.get(db, request));
-        console.log("");
-        resultat_requete["equipement"] = Equipement.get(db, request);
-        console.log(Equipement.get(db, request));
-        console.log("");
-        resultat_requete["installation"] = Installation.get(db, request);
-        console.log(Installation.get(db, request));
-        console.log("");
-    }
+    if(request.equipement === "true" || all)
+        resultat_requete.equipement = await Equipement.get(db, request);
 
-    console.log(resultat_requete);
+    if(request.installation === "true" || all)
+        resultat_requete.installation = await Installation.get(db, request);
 
-    res.send(resultat_requete);
+    res.send(JSON.stringify(resultat_requete));
 });
 
 app.listen(8080);
