@@ -8,10 +8,17 @@ $(document).ready(function() {
         let recherche = $('.recherche').val();
         let region = $('.region').val();
         let ville_cp = $('.ville_cp').val();
-        let installation = $('.installation').is(':checked');;
-        let equipement = $('.equipement').is(':checked');;
+        let installation = $('.installation').is(':checked');
+        let equipement = $('.equipement').is(':checked');
         let activite = $('.activite').is(':checked');
-        console.log(url+'/?=recherche='+recherche+'&region='+region+'&ville_cp='+ville_cp+'&installation='+installation +'&equipement='+equipement+'&activite='+activite);
+
+
+        let n = `${url}/?recherche=${recherche}&region=${region}&ville_cp=${ville_cp}&installation=${installation}&equipement=${equipement}&activite=${activite}`;
+
+        fetch(n)
+            .then(res => res.json())
+            .then(json => console.log(json))
+            .catch(err => console.error(err));
     });
 
 
