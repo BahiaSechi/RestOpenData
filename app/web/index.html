@@ -5,26 +5,26 @@
     <title>Équipements sportifs en Pays de la Loire</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 <body>
 <header>
     <h1>Équipements sportifs en Pays de la Loire</h1>
     <form method="get">
         <div>
-        <input type="text" name="recherche" class="recherche" placeholder="Que recherchez-vous ?">
+        <input type="text" name="recherche" class="recherche" placeholder="Que recherchez-vous ?" ref="text">
         <br> <br>
-        <select name="region" class="region">
+        <select name="region" class="region" ref="region">
             <option value="region_entiere">Toute la région</option>
             <option value="loire_atlantique">Loire-Atlantique</option>
             <option value="maine_loire">Maine-et-Loire</option>
             <option value="mayenne">Mayenne</option>
             <option value="sarthe">Sarthe</option>
         </select>
-        <input type="text" name="ville_cp" class="ville_cp" placeholder="Code postal ou ville">
+        <input type="text" name="ville_cp" class="ville_cp" placeholder="Code postal ou ville" ref="codePostal">
         <br> <br>
 
-            <div class="checkboxes">
+            <div class="checkboxes" ref="domain">
                  <input type="checkbox" name="installation" class="installation" id="installation">
                 <label for="installation">Installations</label>
                  <input type="checkbox" name="activite" class="activite" id="activites">
@@ -34,7 +34,7 @@
             </div>
 
     </div>
-        <input type="submit" class="submit" value="Rechercher">
+        <button @click="search">Rechercher</button>
     </form>
 
     <div class="filtre">
@@ -50,5 +50,16 @@
 
 </header>
 
+<section>
+    <div id="affichage">
+        <ol>
+            <li v-for="installation in data.installation">
+                {{ installation }}
+            </li>
+        </ol>
+    </div>
+</section>
+
+<script type="text/javascript" src="script.js"></script>
 </body>
 </html>

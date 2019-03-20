@@ -1,35 +1,69 @@
-$(document).ready(function() {
+const app = new Vue({
+    el: '#affichage',
+    data: {
+        activites: [],
+        installations: [],
+        equipements: []
+    },
+    methods: {
+        search: function() {
+            let reqParams = [];
 
-    //returns the url of the current page
-    const url = window.location.href;
+            let recherche = this.$refs.textSelector.val();
+            if (recherche !== "") reqParams.push(`q=${recherche}`);
 
-    $('.submit').click(function (e) {
-        e.preventDefault();
+            let codePostal = $('.ville_cp').val();
+            if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
 
-        reqParams = [];
+            let region = $('.region').val();
+            if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);
 
-        let recherche = $('.recherche').val();
-        if (recherche !== "") reqParams.push(`q=${recherche}`);
+            if ($('.installation').is(':checked'))
+                reqParams.push("installation");
 
-        let codePostal = $('.ville_cp').val();
-        if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
+            if ($('.equipement').is(':checked'))
+                reqParams.push("equipement");
 
-        let region = $('.region').val();
-        if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);
+            if ($('.activite').is(':checked'))
+                reqParams.push("activite");
 
-        if ($('.installation').is(':checked'))
-            reqParams.push("installation");
+            let result;
 
-        if ($('.equipement').is(':checked'))
-            reqParams.push("equipement");
+            fetch(url + "api?" + reqParams.join("&"))
+                .then(res => res.json())
+                .then(json => console.log(json))
+                .catch(err => console.error(err));
 
-        if ($('.activite').is(':checked'))
-            reqParams.push("activite");
+            if (result !== undefined) {
 
-        fetch(url + "api?" + reqParams.join("&"))
-            .then(res => res.json())
-            .then(json => console.log(json))
-            .catch(err => console.error(err));
-    });
+                if (result.activite !== undefined && result.activite !== {}) {
+                    app.activites = result.activite;
+                } else {
+                    app.activites = [];
+                }
 
+                if (result.equipement !== undefined && result.equipement !== {}) {
+                    app.equipements = result.equipement;
+                } else {
+                    app.equipements = [];
+                }
+
+                if (result.installation !== undefined && result.installation !== {}) {
+                    app.installations = result.installation;
+                } else {
+                    app.installations = [];
+                }
+
+            }
+        }
+    }
 });
+
+//returns the url of the current page
+const url = window.location.href;
+
+$('.submit').click();
+
+
+
+
