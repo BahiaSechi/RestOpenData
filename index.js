@@ -32,10 +32,9 @@ app.get("/api/", async function(req, res) {
     // Installations
     let reqInst = request.copy();
 
-    if (reqInst.idInstallation) {
-        reqInst.id = reqInst.idInstallation;
-        delete reqInst.idInstallation;
-    }
+    if (reqInst.idInstallation) reqInst.id = reqInst.idInstallation;
+    if (reqInst.qInstallation) reqInst.q = reqInst.qInstallation;
+
     let inst = await Installation.get(db, reqInst);
 
     if (request.installation != null)
@@ -46,16 +45,17 @@ app.get("/api/", async function(req, res) {
     // Equipements
     let reqEquip = request.copy();
 
-    if (reqEquip.idEquip) {
-        reqEquip.id = reqEquip.idEquip;
-        delete reqEquip.idEquip;
-    }
+    if (reqEquip.idEquip) reqEquip.id = reqEquip.idEquip;
+    if (reqEquip.qEquip) reqEquip.q = reqEquip.qEquip;
+
     let equip = await Equipement.get(db, reqEquip);
 
     if (request.equipement != null)
         resultat_requete.equipement = equip;
 
     request.idEquip = equip.map(i => i.id);
+
+    if (request.qActivite) request.q = request.qActivite;
 
     // Activités
     if (request.activite != null)

@@ -9,31 +9,49 @@ const app = new Vue({
         search: function() {
             let reqParams = [];
 
-            let recherche = this.$refs.textSelector.val();
-            if (recherche !== "") reqParams.push(`q=${recherche}`);
+            String.prototype.capitalize = function() {
+                return this.charAt(0).toUpperCase() + this.substr(1);
+            };
 
-            let codePostal = $('.ville_cp').val();
-            if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
+            $('.submit').click(async (e) => {
+                e.preventDefault();
 
-            let region = $('.region').val();
-            if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);
+                reqParams = [];
 
-            if ($('.installation').is(':checked'))
-                reqParams.push("installation");
+                let codePostal = $('.ville_cp').val();
+                if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
 
-            if ($('.equipement').is(':checked'))
-                reqParams.push("equipement");
+                let region = $('.region').val();
+                if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);
 
-            if ($('.activite').is(':checked'))
-                reqParams.push("activite");
+                ["installation", "equipement", "activite"].forEach(name => {
+                    if ($(`.${name}`).is(':checked'))
+                        reqParams.push(name);
+                });
+
+                let recherche = $('.recherche').val();
+
+                let result = {}, promises = [];
+
+                ["installation", "equipement", "activite"].forEach(async name => {
+                    if (reqParams.includes(name)) {
+                        let prom = fetch(url + "api?" + [...reqParams, `q${(name === "equipement" ? name.capitalize() : "Equip")}=${recherche}`].join("&"))
+                            .then(res => res.json())
+                            .then(res => res[name])
+                            .catch(err => console.error(err));
+
+                        promises.push(prom);
+
+                        result.push(await prom);
+                    }
+                });
+
+                await Promise.all(promises);
+
+                console.log(data);
+            });
 
             let result;
-
-            fetch(url + "api?" + reqParams.join("&"))
-                .then(res => res.json())
-                .then(json => console.log(json))
-                .catch(err => console.error(err));
-
             if (result !== undefined) {
 
                 if (result.activite !== undefined && result.activite !== {}) {
@@ -61,9 +79,6 @@ const app = new Vue({
 
 //returns the url of the current page
 const url = window.location.href;
-
-$('.submit').click();
-
 
 
 
