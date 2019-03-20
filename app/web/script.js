@@ -1,57 +1,52 @@
+String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.substr(1);
+};
+
 const app = new Vue({
     el: '#affichage',
     data: {
-        activites: [],
-        installations: [],
-        equipements: []
+        activites: [1],
+        installations: [2],
+        equipements: [3]
     },
     methods: {
-        search: function() {
+        search: async function () {
             let reqParams = [];
 
-            String.prototype.capitalize = function() {
-                return this.charAt(0).toUpperCase() + this.substr(1);
-            };
+            let codePostal = this.$refs.codePostal.value;
+            if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
 
-            $('.submit').click(async (e) => {
-                e.preventDefault();
+            let region = this.$refs.region.value;
+            if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);
 
-                reqParams = [];
-
-                let codePostal = $('.ville_cp').val();
-                if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
-
-                let region = $('.region').val();
-                if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);
-
-                ["installation", "equipement", "activite"].forEach(name => {
-                    if ($(`.${name}`).is(':checked'))
-                        reqParams.push(name);
-                });
-
-                let recherche = $('.recherche').val();
-
-                let result = {}, promises = [];
-
-                ["installation", "equipement", "activite"].forEach(async name => {
-                    if (reqParams.includes(name)) {
-                        let prom = fetch(url + "api?" + [...reqParams, `q${(name === "equipement" ? name.capitalize() : "Equip")}=${recherche}`].join("&"))
-                            .then(res => res.json())
-                            .then(res => res[name])
-                            .catch(err => console.error(err));
-
-                        promises.push(prom);
-
-                        result.push(await prom);
-                    }
-                });
-
-                await Promise.all(promises);
-
-                console.log(data);
+            ["installation", "equipement", "activite"].forEach(name => {
+                if (this.$refs[name].checked)
+                    reqParams.push(name);
             });
 
-            let result;
+            let recherche = this.$refs.recherche.value;
+
+            let result = {}, promises = [];
+
+            ["installation", "equipement", "activite"].forEach(async name => {
+                if (reqParams.includes(name)) {
+                    let reqUrl = url + "api?" + [...reqParams, `q${(name === "equipement" ? "Equip" : name.capitalize())}=${recherche}`].join("&");
+                    console.log(reqUrl);
+                    let prom = fetch(reqUrl)
+                        .then(res => res.json())
+                        .then(res => res[name])
+                        .catch(err => console.error(err));
+
+                    promises.push(prom);
+
+                    result[name] = await prom;
+                }
+            });
+
+            await Promise.all(promises);
+
+            console.log(result);
+
             if (result !== undefined) {
 
                 if (result.activite !== undefined && result.activite !== {}) {

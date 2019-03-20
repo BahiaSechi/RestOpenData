@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <title>Équipements sportifs en Pays de la Loire</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
-<body>
+<body  >
+<div id="affichage">
+
 <header>
     <h1>Équipements sportifs en Pays de la Loire</h1>
-    <form method="get">
         <div>
-        <input type="text" name="recherche" class="recherche" placeholder="Que recherchez-vous ?" ref="text">
+        <input type="text" name="recherche" class="recherche" placeholder="Que recherchez-vous ?" ref="recherche">
         <br> <br>
         <select name="region" class="region" ref="region">
             <option value="region_entiere">Toute la région</option>
@@ -24,19 +24,17 @@
         <input type="text" name="ville_cp" class="ville_cp" placeholder="Code postal ou ville" ref="codePostal">
         <br> <br>
 
-            <div class="checkboxes" ref="domain">
-                 <input type="checkbox" name="installation" class="installation" id="installation">
+            <div class="checkboxes">
+                 <input type="checkbox" name="installation" class="installation" id="installation" ref="installation">
                 <label for="installation">Installations</label>
-                 <input type="checkbox" name="activite" class="activite" id="activites">
+                 <input type="checkbox" name="activite" class="activite" id="activites" ref="activite">
                 <label for="activites">Activités</label>
-                 <input type="checkbox" name="equipement" class="equipement" id="equipement">
+                 <input type="checkbox" name="equipement" class="equipement" id="equipement" ref="equipement">
                 <label for="equipement">Équipements</label>
             </div>
-
     </div>
-        <button @click="search">Rechercher</button>
-    </form>
-
+    <button @click="search">Rechercher</button>
+<!--
     <div class="filtre">
         <br> <br>
         <p>Couvert</p>
@@ -47,19 +45,29 @@
         <br> <br>
         <p>JE SUIS LONGAAAAAAAAAAAAAAAAAAAAAAA</p>
     </div>
-
+-->
 </header>
 
 <section>
-    <div id="affichage">
+    <div>
         <ol>
-            <li v-for="installation in data.installation">
-                {{ installation }}
+            <li v-for="installation in installations">
+                <h2>{{ installation.nom }}</h2>
+                <p>
+                    ok
+                </p>
+            </li>
+            <li v-for="equipement in equipements">
+                {{ equipement }}
+            </li>
+            <li v-for="activite in activites">
+                {{ activite }}
             </li>
         </ol>
     </div>
 </section>
 
+</div>
 <script type="text/javascript" src="script.js"></script>
 </body>
 </html>
