@@ -9,7 +9,7 @@ function constrArgs(cla) {
 }
 
 Object.prototype.copy = function() {
-    return JSON.parse(JSON.stringify(this));
+    return Object.assign({}, this)
 };
 
 module.exports = {constrArgs};

@@ -29,7 +29,7 @@ function loadCsv(path, destClass) {
 
 // Create tables
 db.serialize(() => {
-    loadCsv("csv/activites_xs.csv", Activite);
-    loadCsv("csv/equipements_xs.csv", Equipement);
-    loadCsv("csv/installations_xs.csv", Installation);
+    loadCsv("csv/activites_small.csv", Activite);
+    loadCsv("csv/equipements_small.csv", Equipement);
+    loadCsv("csv/installations_small.csv", Installation);
 });
