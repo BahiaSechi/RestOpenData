@@ -16,52 +16,58 @@ app.get('/', function(req, res) {
     res.sendFile("index.html")
 });
 
-app.get("/api/", async function(req, res) {
-    let resultat_requete = {};
+app.get("/api/installations", async function(req, res) {
+    let query = req.query;
+    
+    // Récupérer les installations (avec la recherche)
+    let result = await Installation.get(db, query);
+    
+    // Suppression de la recherche pour la suite
+    delete query.q;
+    
+    // Récupération des équipements (et filtrage des ids)
+    let equipements = (await Equipement.get(db, query)).filter(equip => result.map(inst => inst.id).includes(equip.idInstallation));
+    
+    // Récupération des activités (et filtrage des ids)
+    let activites = (await Activite.get(db, query)).filter(act => equipements.map(equip => equip.id).includes(act.idEquip));
+    
+    // Intégration des activités dans les équipements
+    for (let i = 0; i < equipements.length; i++)
+        equipements[i].activites = activites.filter(act => act.idEquip === equipements[i].id);
+    
+    // Intégration des équipements dans les installations
+    for (let i = 0; i < result.length; i++)
+        result[i].equipements = equipements.filter(equip => equip.idInstallation === result[i].id);
+    
+    // Envoi du résultat
+    res.send(JSON.stringify(result));
+});
 
-    // Récuperation des attributs de la requete
-    let request = req.query;
-
-    // Découpage des données en tableaux, pour ceux contenant une suite de valeurs séparés par des virgules
-    for (let key in request) {
-        if (request.hasOwnProperty(key))
-            if (request[key].indexOf(",") > -1)
-                request[key] = request[key].split(",");
-    }
-
-    // Installations
-    let reqInst = request.copy();
-
-    if (reqInst.idInstallation) reqInst.id = reqInst.idInstallation;
-    if (reqInst.qInstallation) reqInst.q = reqInst.qInstallation;
-
-    let inst = await Installation.get(db, reqInst);
-
-    if (request.installation != null)
-        resultat_requete.installation = inst;
-
-    request.idInstallation = inst.map(i => i.id);
-
-    // Equipements
-    let reqEquip = request.copy();
-
-    if (reqEquip.idEquip) reqEquip.id = reqEquip.idEquip;
-    if (reqEquip.qEquip) reqEquip.q = reqEquip.qEquip;
-
-    let equip = await Equipement.get(db, reqEquip);
-
-    if (request.equipement != null)
-        resultat_requete.equipement = equip;
-
-    request.idEquip = equip.map(i => i.id);
-
-    if (request.qActivite) request.q = request.qActivite;
-
-    // Activités
-    if (request.activite != null)
-        resultat_requete.activite = await Activite.get(db, request);
-
-    res.send(JSON.stringify(resultat_requete));
+app.get("/api/activites", async function(req, res) {
+    let query = req.query;
+    
+    // Récupérer les activités (avec la recherche)
+    let result = await Activite.get(db, query);
+    
+    // Suppression de la recherche pour la suite
+    delete query.q;
+    
+    // Récupération des équipements (et filtrage des ids)
+    let equipements = (await Equipement.get(db, query)).filter(equip => result.map(act => act.idEquip).includes(equip.id));
+    
+    // Récupération des installations (et filtrage des ids)
+    let installations = (await Installation.get(db, query)).filter(inst => equipements.map(equip => equip.idInstallation).includes(inst.id));
+    
+    // Intégration des installations dans les équipements
+    for (let i = 0; i < equipements.length; i++)
+        equipements[i].installation = installations.filter(inst => inst.id === equipements[i].idInstallation);
+    
+    // Intégration des équipements dans les activités
+    for (let i = 0; i < result.length; i++)
+        result[i].equipement = equipements.filter(equip => equip.id === result[i].idEquip);
+    
+    // Envoi du résultat
+    res.send(JSON.stringify(result));
 });
 
 app.listen(8080);

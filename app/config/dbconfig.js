@@ -23,7 +23,6 @@ function loadCsv(path, destClass) {
         }).on("error", error=> {
             console.log(error);
         }
-
     );
 }
 

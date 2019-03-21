@@ -94,8 +94,6 @@ class DBObject {
         }
         command += ";";
 
-        console.log(command);
-
         return new Promise((res, rej) => {
             db.all(command, statement_args, (err, rows) => {
                 if (err) rej(err);
