@@ -1,76 +1,108 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Équipements sportifs en Pays de la Loire</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<meta charset="UTF-8">
+	<title>Équipements sportifs en Pays de la Loire</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
-<body  >
-<div id="affichage">
-
-<header>
-    <h1>Équipements sportifs en Pays de la Loire</h1>
-    <div>
-        <input type="text" name="recherche" class="recherche" placeholder="Que recherchez-vous ?" ref="recherche">
-        <br><br>
-        
-        <select name="region" class="region" ref="region">
-            <option value="region_entiere">Toute la région</option>
-            <option value="loire_atlantique">Loire-Atlantique</option>
-            <option value="maine_loire">Maine-et-Loire</option>
-            <option value="mayenne">Mayenne</option>
-            <option value="sarthe">Sarthe</option>
-        </select>
-        
-        <input type="text" name="ville_cp" class="ville_cp" placeholder="Code postal ou ville" ref="codePostal">
-        <br><br>
-        
-        <div class="radio">
-             <input type="radio" name="type" id="installation" ref="installation" checked>
-            <label for="installation">Installations</label>
-             <input type="radio" name="type" id="activite" ref="activite">
-            <label for="activite">Activités</label>
-        </div>
-    </div>
-    <button @click="search">Rechercher</button>
-<!--
-    <div class="filtre">
-        <br> <br>
-        <p>Couvert</p>
-        <br> <br>
-        <p>Accès handicapé</p>
-        <br> <br>
-        <p>Ouiiefueifuei</p>
-        <br> <br>
-        <p>JE SUIS LONGAAAAAAAAAAAAAAAAAAAAAAA</p>
-    </div>
--->
-</header>
-
-<section>
-    <div>
-        <ol>
-            <li v-for="installation in installations">
-                <h2>{{ installation.nom }}</h2> <h3>{{ installation.nomVoie }}</h3>
-                <div ref="toggle_installations">infos</div>
-                <br>
-            </li>
-            <li v-for="activite in activites">
-                <h2>{{ activite.nomact }}</h2>
-                <div ref="toggle_equipements">infos</div>
-                <template v-for="equipement in activite.equipement">
-                    {{equipement.nom}}
-                </template>
-
-
-                <br>
-            </li>
-        </ol>
-    </div>
-</section>
-
-</div>
-<script type="text/javascript" src="script.js"></script>
+<body>
+	<div id="affichage">
+		<div class="filtre">
+			<template v-for="(filtre, nom) of filtres">
+				<h2>{{ nom }}</h2>
+				<label v-for="f of filtre">
+					<br>
+					<input type="checkbox" :name="nom">
+					{{ f }}
+				</label>
+				<br>
+			</template>
+		</div>
+		
+		<header>
+			<h1>Équipements sportifs en Pays de la Loire</h1>
+			<div>
+				<input type="text" name="recherche" class="recherche" placeholder="Que recherchez-vous ?" ref="recherche">
+				<br><br>
+				<!--
+				<select name="region" class="region" ref="region">
+					<option value="region_entiere">Toute la région</option>
+					<option value="loire_atlantique">Loire-Atlantique</option>
+					<option value="maine_loire">Maine-et-Loire</option>
+					<option value="mayenne">Mayenne</option>
+					<option value="sarthe">Sarthe</option>
+				</select>
+				-->
+				<input type="text" name="ville_cp" class="ville_cp" placeholder="Code postal" ref="codePostal">
+				<br><br>
+				
+				<div class="radio">
+					<input type="radio" name="type" id="installation" ref="installation" checked>
+					<label for="installation">Installations</label>
+					
+					<input type="radio" name="type" id="activite" ref="activite">
+					<label for="activite">Activités</label>
+				</div>
+			</div>
+			<br>
+			<button @click="search">Rechercher</button>
+		</header>
+		
+		<section v-if="!no_result">
+			<div>
+				<ul>
+					<li v-for="inst in installations" class="info">
+						<h2>{{ inst.nom }}</h2>
+						<br>
+						<h3>Adresse : {{ inst.numVoie }} {{ inst.nomVoie }} {{ inst.lieuDit }} {{ inst.codePostal }}</h3>
+						<br><br>
+						
+						<h3 @click="derouler(inst.nom)">
+							Equipements :
+							<span v-if="show[inst.nom]">-</span>
+							<span v-else>+</span>
+						</h3>
+						<div class="list" v-if="show[inst.nom]">
+							<div class="list_info" v-for="equip in inst.equipements">
+								<h3>{{ equip.nom }}</h3> <br>
+								<p><b>Type :</b> {{ equip.type }}</p>
+								<p><b>Sol :</b> {{ equip.sol }}</p>
+								<p><b>Intérieur :</b> {{ equip.interieur }}</p>
+								<br>
+								
+								<h4 @click="derouler(inst.nom + '/' + equip.nom)">
+									Activités :
+									<span v-if="show[inst.nom + '/' + equip.nom]">-</span>
+									<span v-else>+</span>
+								</h4>
+								<div class="list" v-if="show[inst.nom + '/' + equip.nom]">
+									<div class="list_info" v-for="act in equip.activites">
+										<h4>{{ act.nomact }}</h4>
+										<p>Niveau: {{ act.niveau }}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li v-for="activite in activites" class="info">
+						<h2>{{ activite.nomact }}</h2>
+						<br>
+						<h3>Niveau: {{ activite.niveau }}</h3>
+						<br><br>
+						<p><b>Equipement :</b> {{activite.equipement.nom}} ({{ activite.equipement.type }})</p>
+						<p><b>Installation :</b> {{ activite.equipement.installation.nom }}</p>
+						<p><b>Adresse :</b> {{ activite.equipement.installation.numVoie }} {{
+							activite.equipement.installation.nomVoie }}
+							{{ activite.equipement.installation.lieuDit }} {{ activite.equipement.installation.codePostal }}
+						</p>
+					</li>
+				</ul>
+			</div>
+		</section>
+		<h2 v-else>Aucun résultat.</h2>
+	</div>
+	
+	<script type="text/javascript" src="script.js"></script>
 </body>
 </html>
