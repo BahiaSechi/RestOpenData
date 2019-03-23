@@ -5,9 +5,8 @@ String.prototype.capitalize = function () {
 const app = new Vue({
     el: '#affichage',
     data: {
-        activites: [1],
-        installations: [2],
-        equipements: [3]
+        activites: [],
+        installations: []
     },
     methods: {
         search: async function () {
@@ -29,28 +28,24 @@ const app = new Vue({
             result = await fetch(reqUrl).then(res => res.json());
             
             console.log(reqUrl);
-            console.log(result);
+            //console.log(result);
 
-            if (result !== undefined) {
+            if (result !== undefined && result !== []) {
+                console.log("result !");
+                console.log(result[0]);
 
-                if (result.activite !== undefined && result.activite !== {}) {
-                    app.activites = result.activite;
-                } else {
+                if(result[0].nomact === undefined){
+                    //console.log(result[0].nomact);
+                    app.installations = result;
                     app.activites = [];
-                }
-
-                if (result.equipement !== undefined && result.equipement !== {}) {
-                    app.equipements = result.equipement;
-                } else {
-                    app.equipements = [];
-                }
-
-                if (result.installation !== undefined && result.installation !== {}) {
-                    app.installations = result.installation;
-                } else {
+                }else {
+                    app.activites = result;
                     app.installations = [];
                 }
-
+            }else{
+                console.log("nope !");
+                app.activites = [];
+                app.installations = [];
             }
         }
     }

@@ -52,16 +52,19 @@
     <div>
         <ol>
             <li v-for="installation in installations">
-                <h2>{{ installation.nom }}</h2>
-                <p>
-                    ok
-                </p>
-            </li>
-            <li v-for="equipement in equipements">
-                {{ equipement }}
+                <h2>{{ installation.nom }}</h2> <h3>{{ installation.nomVoie }}</h3>
+                <div ref="toggle_installations">infos</div>
+                <br>
             </li>
             <li v-for="activite in activites">
-                {{ activite }}
+                <h2>{{ activite.nomact }}</h2>
+                <div ref="toggle_equipements">infos</div>
+                <template v-for="equipement in activite.equipement">
+                    {{equipement.nom}}
+                </template>
+
+
+                <br>
             </li>
         </ol>
     </div>
