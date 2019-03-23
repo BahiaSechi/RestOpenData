@@ -10,12 +10,18 @@
 	<div id="affichage">
 		<div class="filtre">
 			<template v-for="(filtre, nom) of filtres">
-				<h2>{{ nom }}</h2>
-				<label v-for="f of filtre">
-					<br>
-					<input type="checkbox" :name="nom">
-					{{ f }}
-				</label>
+				<h2 @click="derouler(nom)">
+					{{ nom }}
+					<span v-if="show[nom]">-</span>
+					<span v-else>+</span>
+				</h2>
+				<div class="filtre_options" v-if="show[nom]">
+					<label v-for="f of filtre">
+						<br>
+						<input type="checkbox" :name="nom">
+						{{ f }}
+					</label>
+				</div>
 				<br>
 			</template>
 		</div>

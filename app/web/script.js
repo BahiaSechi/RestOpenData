@@ -4,13 +4,18 @@ String.prototype.capitalize = function() {
 
 const app = new Vue({
     el: "#affichage",
+    
     data: {
+        result: [],
+        no_result: false,
+        
         activites: [],
         installations: [],
+        
         filtres: {},
-        show: {},
-        no_result: false
+        show: {}
     },
+    
     methods: {
         search: async function() {
             let reqParams = [];
@@ -36,6 +41,9 @@ const app = new Vue({
                     this.activites = result;
                     this.installations = [];
                 }
+                
+                // Create filter
+                this.addKeysToFilter(result);
     
                 this.no_result = false;
             } else {
@@ -44,9 +52,30 @@ const app = new Vue({
                 
                 this.no_result = true;
             }
+            
+            // Reset open lists
+            for (let key in this.show) {
+                this.$set(this.show, key, false);
+            }
         },
+        
         derouler: function(nom) {
             this.$set(this.show, nom, !this.show[nom]);
+        },
+        
+        addKeysToFilter(arr) {
+            for (let obj of arr)
+                for (let key in obj) {
+                    if (!Array.isArray(obj[key])) {
+                        if (!["codePostal", "numVoie", "nomVoie", "lieuDit", "nom"].includes(key))
+                            if (this.filtres[key] == null)
+                                this.$set(this.filtres, key, [obj[key]]);
+                            else if (!this.filtres[key].includes(obj[key]))
+                                this.$set(this.filtres, key, [...this.filtres[key], obj[key]]);
+                    } else {
+                        this.addKeysToFilter(obj[key]);
+                    }
+                }
         }
     }
 });
