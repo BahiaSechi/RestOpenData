@@ -16,35 +16,18 @@ const app = new Vue({
             let codePostal = this.$refs.codePostal.value;
             if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
 
-            let region = this.$refs.region.value;
-            if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);
+            /*let region = this.$refs.region.value;
+            if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);*/
 
-            ["installation", "equipement", "activite"].forEach(name => {
-                if (this.$refs[name].checked)
-                    reqParams.push(name);
-            });
+            let result = null;
+            
+            if (this.$refs.installation.checked)
+                result = fetch(url + "api/installations?" + reqParams.join("&"));
+            else
+                result = fetch(url + "api/activites?" + reqParams.join("&"));
 
-            let recherche = this.$refs.recherche.value;
-
-            let result = {}, promises = [];
-
-            ["installation", "equipement", "activite"].forEach(async name => {
-                if (reqParams.includes(name)) {
-                    let reqUrl = url + "api?" + [...reqParams, `q${(name === "equipement" ? "Equip" : name.capitalize())}=${recherche}`].join("&");
-                    console.log(reqUrl);
-                    let prom = fetch(reqUrl)
-                        .then(res => res.json())
-                        .then(res => res[name])
-                        .catch(err => console.error(err));
-
-                    promises.push(prom);
-
-                    result[name] = await prom;
-                }
-            });
-
-            await Promise.all(promises);
-
+            result = await result.then(res => res.json());
+            
             console.log(result);
 
             if (result !== undefined) {

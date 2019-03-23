@@ -59,12 +59,26 @@ app.get("/api/activites", async function(req, res) {
     let installations = (await Installation.get(db, query)).filter(inst => equipements.map(equip => equip.idInstallation).includes(inst.id));
     
     // Intégration des installations dans les équipements
-    for (let i = 0; i < equipements.length; i++)
-        equipements[i].installation = installations.filter(inst => inst.id === equipements[i].idInstallation);
+    for (let i = 0; i < equipements.length; i++) {
+        let inst = installations.filter(inst => inst.id === equipements[i].idInstallation)[0];
+        if (inst)
+            equipements[i].installation = installations.filter(inst => inst.id === equipements[i].idInstallation)[0];
+        else {
+            equipements.splice(i, 1);
+            i--;
+        }
+    }
     
     // Intégration des équipements dans les activités
-    for (let i = 0; i < result.length; i++)
-        result[i].equipement = equipements.filter(equip => equip.id === result[i].idEquip);
+    for (let i = 0; i < result.length; i++) {
+        let equip = equipements.filter(equip => equip.id === result[i].idEquip)[0];
+        if (equip)
+            result[i].equipement = equip;
+        else {
+            result.splice(i, 1);
+            i--;
+        }
+    }
     
     // Envoi du résultat
     res.send(JSON.stringify(result));

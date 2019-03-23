@@ -11,9 +11,10 @@
 
 <header>
     <h1>Équipements sportifs en Pays de la Loire</h1>
-        <div>
+    <div>
         <input type="text" name="recherche" class="recherche" placeholder="Que recherchez-vous ?" ref="recherche">
-        <br> <br>
+        <br><br>
+        
         <select name="region" class="region" ref="region">
             <option value="region_entiere">Toute la région</option>
             <option value="loire_atlantique">Loire-Atlantique</option>
@@ -21,17 +22,16 @@
             <option value="mayenne">Mayenne</option>
             <option value="sarthe">Sarthe</option>
         </select>
+        
         <input type="text" name="ville_cp" class="ville_cp" placeholder="Code postal ou ville" ref="codePostal">
-        <br> <br>
-
-            <div class="checkboxes">
-                 <input type="checkbox" name="installation" class="installation" id="installation" ref="installation">
-                <label for="installation">Installations</label>
-                 <input type="checkbox" name="activite" class="activite" id="activites" ref="activite">
-                <label for="activites">Activités</label>
-                 <input type="checkbox" name="equipement" class="equipement" id="equipement" ref="equipement">
-                <label for="equipement">Équipements</label>
-            </div>
+        <br><br>
+        
+        <div class="radio">
+             <input type="radio" name="type" id="installation" ref="installation" checked>
+            <label for="installation">Installations</label>
+             <input type="radio" name="type" id="activite" ref="activite">
+            <label for="activite">Activités</label>
+        </div>
     </div>
     <button @click="search">Rechercher</button>
 <!--
