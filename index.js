@@ -39,6 +39,19 @@ app.get("/api/installations", async function(req, res) {
     for (let i = 0; i < result.length; i++)
         result[i].equipements = equipements.filter(equip => equip.idInstallation === result[i].id);
     
+    // Suppression des ids
+    for (let install of result) {
+        for (let equip of install.equipements) {
+            for (let act of equip.activites) {
+                delete act.id;
+                delete act.idEquip;
+            }
+            delete equip.id;
+            delete equip.idInstallation;
+        }
+        delete install.id;
+    }
+    
     // Envoi du résultat
     res.send(JSON.stringify(result));
 });
@@ -78,6 +91,17 @@ app.get("/api/activites", async function(req, res) {
             result.splice(i, 1);
             i--;
         }
+    }
+    
+    // Suppression des ids
+    for (let act of result) {
+        delete act.id;
+        delete act.idEquip;
+        
+        delete act.equipement.id;
+        delete act.equipement.idInstallation;
+        
+        delete act.equipement.installation.id;
     }
     
     // Envoi du résultat
