@@ -15,19 +15,20 @@ const app = new Vue({
 
             let codePostal = this.$refs.codePostal.value;
             if (codePostal !== "") reqParams.push(`codePostal=${codePostal}`);
-
+    
+            let recherche = this.$refs.recherche.value;
+            if (recherche !== "") reqParams.push(`q=${recherche}`);
+            
             /*let region = this.$refs.region.value;
             if (region !== "" && codePostal === "") reqParams.push(`region=${region}`);*/
 
             let result = null;
             
-            if (this.$refs.installation.checked)
-                result = fetch(url + "api/installations?" + reqParams.join("&"));
-            else
-                result = fetch(url + "api/activites?" + reqParams.join("&"));
-
-            result = await result.then(res => res.json());
+            let reqUrl = url + "api/" + (this.$refs.installation.checked ? "installations" : "activites") + "?" + reqParams.join("&");
             
+            result = await fetch(reqUrl).then(res => res.json());
+            
+            console.log(reqUrl);
             console.log(result);
 
             if (result !== undefined) {
