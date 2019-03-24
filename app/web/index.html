@@ -18,7 +18,7 @@
 				<div class="filtre_options" v-if="show[nom]">
 					<label v-for="f of filtre">
 						<br>
-						<input type="checkbox" :name="nom">
+						<input type="checkbox" :name="nom" @click="toggle_filtre(nom, f)" :checked="get_filtre(nom, f)">
 						{{ f }}
 					</label>
 				</div>
@@ -58,7 +58,7 @@
 		<section v-if="!no_result">
 			<div>
 				<ul>
-					<li v-for="inst in installations" class="info">
+					<li v-for="inst in filtrer(installations)" class="info">
 						<h2>{{ inst.nom }}</h2>
 						<br>
 						<h3>Adresse : {{ inst.numVoie }} {{ inst.nomVoie }} {{ inst.lieuDit }} {{ inst.codePostal }}</h3>
@@ -70,7 +70,7 @@
 							<span v-else>+</span>
 						</h3>
 						<div class="list" v-if="show[inst.nom]">
-							<div class="list_info" v-for="equip in inst.equipements">
+							<div class="list_info" v-for="equip in filtrer(inst.equipements)">
 								<h3>{{ equip.nom }}</h3> <br>
 								<p><b>Type :</b> {{ equip.type }}</p>
 								<p><b>Sol :</b> {{ equip.sol }}</p>
@@ -83,7 +83,7 @@
 									<span v-else>+</span>
 								</h4>
 								<div class="list" v-if="show[inst.nom + '/' + equip.nom]">
-									<div class="list_info" v-for="act in equip.activites">
+									<div class="list_info" v-for="act in filtrer(equip.activites)">
 										<h4>{{ act.nomact }}</h4>
 										<p>Niveau: {{ act.niveau }}</p>
 									</div>
@@ -91,7 +91,8 @@
 							</div>
 						</div>
 					</li>
-					<li v-for="activite in activites" class="info">
+					
+					<li v-for="activite in filtrer(activites)" class="info">
 						<h2>{{ activite.nomact }}</h2>
 						<br>
 						<h3>Niveau: {{ activite.niveau }}</h3>

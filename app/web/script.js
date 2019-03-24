@@ -13,6 +13,7 @@ const app = new Vue({
         installations: [],
         
         filtres: {},
+        filtres_checked: {},
         show: {}
     },
     
@@ -63,19 +64,60 @@ const app = new Vue({
             this.$set(this.show, nom, !this.show[nom]);
         },
         
-        addKeysToFilter(arr) {
+        addKeysToFilter: function(arr) {
             for (let obj of arr)
                 for (let key in obj) {
-                    if (!Array.isArray(obj[key])) {
+                    if (!Array.isArray(obj[key]) && typeof obj[key] !== "object") {
                         if (!["codePostal", "numVoie", "nomVoie", "lieuDit", "nom"].includes(key))
                             if (this.filtres[key] == null)
                                 this.$set(this.filtres, key, [obj[key]]);
                             else if (!this.filtres[key].includes(obj[key]))
                                 this.$set(this.filtres, key, [...this.filtres[key], obj[key]]);
-                    } else {
+                    } else if (typeof obj[key] !== "object") {
                         this.addKeysToFilter(obj[key]);
+                    } else {
+                        this.addKeysToFilter([obj[key]]);
                     }
                 }
+        },
+        
+        toggle_filtre: function(categ, prop) {
+            if (!this.filtres_checked[categ])
+                this.$set(this.filtres_checked, categ, {});
+            
+            this.$set(this.filtres_checked[categ], prop, !this.filtres_checked[categ][prop]);
+        },
+        
+        get_filtre: function(categ, prop) {
+            return !!(this.filtres_checked[categ] && this.filtres_checked[categ][prop]);
+        },
+        
+        filtrer: function(arr) {
+            function containedAny(obj, key, value) {
+                for (let k in obj)
+                    if (k === key && obj[k] === value)
+                        return true;
+                    else if (typeof obj[k] === "object")
+                        return containedAny(obj[k], key, value);
+                
+                return false;
+            }
+            
+            return arr.filter(elem => {
+                let result = true;
+                for (let categ in this.filtres_checked) {
+                    let tmp = false, changed = false;
+                    
+                    for (let value in this.filtres_checked[categ]) {
+                        if (this.filtres_checked[categ][value] === true) {
+                            tmp = tmp || containedAny(elem, categ, value);
+                            changed = true;
+                        }
+                    }
+                    result = result && (tmp || !changed);
+                }
+                return result;
+            });
         }
     }
 });
