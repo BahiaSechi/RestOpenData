@@ -19,7 +19,7 @@
 					<label v-for="f of filtre">
 						<br>
 						<input type="checkbox" :name="nom" @click="toggle_filtre(nom, f)" :checked="get_filtre(nom, f)">
-						{{ f }}
+                        <span v-if="f !== ''">{{ f }}</span><span v-else=>Pas d'informations</span>
 					</label>
 				</div>
 				<br>
