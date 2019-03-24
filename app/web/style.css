@@ -47,6 +47,13 @@ header {
 	padding: 20px;
 	
 	overflow: auto;
+	
+	scrollbar-width: none; /*For Firefox*/
+	-ms-overflow-style: none; /*For IE and Edge*/
+}
+
+.filtre::-webkit-scrollbar {
+	width: 0; /*For Chrome, Safari and Opera*/
 }
 
 .filtre {

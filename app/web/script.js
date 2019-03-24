@@ -95,12 +95,12 @@ const app = new Vue({
         filtrer: function(arr) {
             function containedAny(obj, key, value) {
                 for (let k in obj)
-                    if (k === key && obj[k] === value)
-                        return true;
+                    if (k === key)
+                        return obj[k] === value;
                     else if (typeof obj[k] === "object")
                         return containedAny(obj[k], key, value);
                 
-                return false;
+                return true;
             }
             
             return arr.filter(elem => {
